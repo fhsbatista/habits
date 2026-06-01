@@ -76,6 +76,18 @@ func (r *SessionRepository) FindByDay(day time.Time) ([]domain.Session, error) {
 	return scanSessions(rows)
 }
 
+func (r *SessionRepository) FindByDateRange(start, end time.Time) ([]domain.Session, error) {
+	rows, err := r.db.Query(
+		`SELECT id, ref_type, ref_id, started_at, finished_at FROM sessions WHERE started_at >= ? AND started_at < ? ORDER BY started_at`,
+		start.UTC().Format(time.RFC3339), end.UTC().Format(time.RFC3339),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("buscar sessões por intervalo: %w", err)
+	}
+	defer rows.Close()
+	return scanSessions(rows)
+}
+
 func (r *SessionRepository) Update(s domain.Session) error {
 	_, err := r.db.Exec(
 		`UPDATE sessions SET finished_at=? WHERE id=?`,

@@ -37,6 +37,7 @@ func main() {
 	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
 	checkOut := usecase.NewCheckOut(sessionRepo)
 	dailyTimeline := usecase.NewDailyTimeline(habitRepo, taskRepo, sessionRepo)
+	habitGrid := usecase.NewHabitGrid(habitRepo, sessionRepo)
 
 	app := cli.NewApp()
 	app.Register("pillar", "Gerencia pilares (add, list)", cli.NewPillarCommand(createPillar, listPillars))
@@ -45,7 +46,7 @@ func main() {
 	app.Register("ls", "Alias para list", cli.NewListCommand(dailyOverview))
 	app.Register("start", "Inicia uma sessão para um hábito ou tarefa", cli.NewStartCommand(checkIn))
 	app.Register("stop", "Finaliza a sessão em andamento", cli.NewStopCommand(checkOut))
-	app.Register("log", "Exibe a timeline do dia", cli.NewLogCommand(dailyTimeline))
+	app.Register("log", "Exibe a timeline do dia e grid de hábitos", cli.NewLogCommand(dailyTimeline, habitGrid))
 
 	app.Run(os.Args[1:])
 }

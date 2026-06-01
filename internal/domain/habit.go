@@ -70,6 +70,23 @@ func (h Habit) IsDueOn(day Weekday) bool {
 	return false
 }
 
+func (h Habit) WasPerformedOn(day time.Time, sessions []Session) bool {
+	dayStart := time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location())
+	dayEnd := dayStart.Add(24 * time.Hour)
+	for _, s := range sessions {
+		if s.RefType != SessionRefHabit || s.RefID != h.ID {
+			continue
+		}
+		if s.FinishedAt == nil {
+			continue
+		}
+		if s.StartedAt.Equal(dayStart) || (s.StartedAt.After(dayStart) && s.StartedAt.Before(dayEnd)) {
+			return true
+		}
+	}
+	return false
+}
+
 func (h Habit) IsDueToday() bool {
 	return h.IsDueOn(WeekdayFromTime(time.Now()))
 }

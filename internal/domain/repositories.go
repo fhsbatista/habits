@@ -16,6 +16,7 @@ type SessionRepository interface {
 	FindOpen() (Session, bool, error)
 	FindByDayAndRef(day time.Time, refType SessionRefType, refID int64) ([]Session, error)
 	FindByDay(day time.Time) ([]Session, error)
+	FindByDateRange(start, end time.Time) ([]Session, error)
 	Update(session Session) error
 }
 

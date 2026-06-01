@@ -39,6 +39,15 @@ func (r *fakeSessionRepo) FindByDay(day time.Time) ([]domain.Session, error) {
 	}
 	return result, nil
 }
+func (r *fakeSessionRepo) FindByDateRange(start, end time.Time) ([]domain.Session, error) {
+	var result []domain.Session
+	for _, s := range r.sessions {
+		if (s.StartedAt.Equal(start) || s.StartedAt.After(start)) && s.StartedAt.Before(end) {
+			result = append(result, s)
+		}
+	}
+	return result, nil
+}
 func (r *fakeSessionRepo) Update(s domain.Session) error {
 	r.sessions[s.ID] = s
 	return nil
