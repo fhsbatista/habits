@@ -45,6 +45,14 @@ func migrate(db *sql.DB) error {
 			created_at  DATETIME NOT NULL,
 			updated_at  DATETIME
 		);
+
+		CREATE TABLE IF NOT EXISTS sessions (
+			id          INTEGER PRIMARY KEY AUTOINCREMENT,
+			ref_type    TEXT    NOT NULL,
+			ref_id      INTEGER NOT NULL,
+			started_at  DATETIME NOT NULL,
+			finished_at DATETIME
+		);
 	`)
 	return err
 }

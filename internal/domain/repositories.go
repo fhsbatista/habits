@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type HabitRepository interface {
 	Save(habit Habit) (Habit, error)
 	FindByID(id int64) (Habit, bool, error)
@@ -9,8 +11,17 @@ type HabitRepository interface {
 	Delete(id int64) error
 }
 
+type SessionRepository interface {
+	Save(session Session) (Session, error)
+	FindOpen() (Session, bool, error)
+	FindByDayAndRef(day time.Time, refType SessionRefType, refID int64) ([]Session, error)
+	FindByDay(day time.Time) ([]Session, error)
+	Update(session Session) error
+}
+
 type TaskRepository interface {
 	Save(task Task) (Task, error)
+	FindByID(id int64) (Task, bool, error)
 	FindByTitle(title string) (Task, bool, error)
 	FindInProgress() ([]Task, error)
 	Update(task Task) error

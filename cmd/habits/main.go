@@ -26,6 +26,7 @@ func main() {
 	habitRepo := sqlite.NewHabitRepository(db)
 	pillarRepo := sqlite.NewPillarRepository(db)
 	taskRepo := sqlite.NewTaskRepository(db)
+	sessionRepo := sqlite.NewSessionRepository(db)
 
 	createHabit := usecase.NewCreateHabit(pillarRepo, habitRepo)
 	createPillar := usecase.NewCreatePillar(pillarRepo)
@@ -33,12 +34,14 @@ func main() {
 	listHabits := usecase.NewListHabits(habitRepo)
 	removeHabit := usecase.NewRemoveHabit(habitRepo)
 	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
+	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
 
 	app := cli.NewApp()
 	app.Register("pillar", cli.NewPillarCommand(createPillar, listPillars))
 	app.Register("habit", cli.NewHabitCommand(createHabit, listHabits, removeHabit))
 	app.Register("list", cli.NewListCommand(dailyOverview))
 	app.Register("ls", cli.NewListCommand(dailyOverview))
+	app.Register("start", cli.NewStartCommand(checkIn))
 
 	app.Run(os.Args[1:])
 }

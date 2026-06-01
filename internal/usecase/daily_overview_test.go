@@ -12,6 +12,11 @@ type fakeTaskRepo struct {
 	tasks map[int64]domain.Task
 }
 
+func (r *fakeTaskRepo) FindByID(id int64) (domain.Task, bool, error) {
+	t, ok := r.tasks[id]
+	return t, ok, nil
+}
+
 func (r *fakeTaskRepo) Save(t domain.Task) (domain.Task, error) {
 	t.ID = int64(len(r.tasks) + 1)
 	r.tasks[t.ID] = t

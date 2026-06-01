@@ -30,6 +30,11 @@ func (r *TaskRepository) Save(t domain.Task) (domain.Task, error) {
 	return t, nil
 }
 
+func (r *TaskRepository) FindByID(id int64) (domain.Task, bool, error) {
+	row := r.db.QueryRow(`SELECT id, title, description, status, next_action, created_at, updated_at FROM tasks WHERE id = ?`, id)
+	return scanTask(row)
+}
+
 func (r *TaskRepository) FindByTitle(title string) (domain.Task, bool, error) {
 	row := r.db.QueryRow(`SELECT id, title, description, status, next_action, created_at, updated_at FROM tasks WHERE title = ?`, title)
 	return scanTask(row)
