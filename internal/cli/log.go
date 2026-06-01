@@ -22,8 +22,8 @@ const (
 
 func NewLogCommand(dailyTimeline *usecase.DailyTimeline) func(args []string) {
 	return func(args []string) {
-		fs := newFlagSet("log")
-		dateStr := fs.String("date", "", "data no formato YYYY-MM-DD")
+		fs := newFlagSet("log", "log [--date YYYY-MM-DD]")
+		dateStr := fs.String("date", "", "data no formato YYYY-MM-DD (padrão: hoje)")
 		fs.Parse(args)
 
 		day := time.Now()

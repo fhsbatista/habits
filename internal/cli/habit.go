@@ -13,9 +13,13 @@ import (
 
 func NewHabitCommand(createHabit *usecase.CreateHabit, listHabits *usecase.ListHabits, removeHabit *usecase.RemoveHabit) func(args []string) {
 	return func(args []string) {
-		if len(args) < 1 {
-			fmt.Fprintln(os.Stderr, "uso: habits habit <add|list|remove>")
-			os.Exit(1)
+		if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
+			fmt.Println("Uso:")
+			fmt.Println("  habits habit add <nome> --pillar <id> --days <dias>   Cria um hábito")
+			fmt.Println("  habits habit list [--pillar <id>]                     Lista hábitos")
+			fmt.Println("  habits habit remove <id>                              Remove um hábito")
+			fmt.Println("\nDias: dom,seg,ter,qua,qui,sex,sab  ou  todos")
+			return
 		}
 		switch args[0] {
 		case "add":
@@ -31,8 +35,25 @@ func NewHabitCommand(createHabit *usecase.CreateHabit, listHabits *usecase.ListH
 	}
 }
 
+func habitRemove(uc *usecase.RemoveHabit, args []string) {
+	if len(args) < 1 {
+		fmt.Fprintln(os.Stderr, "uso: habits habit remove <id>")
+		os.Exit(1)
+	}
+	var id int64
+	if _, err := fmt.Sscan(args[0], &id); err != nil {
+		fmt.Fprintf(os.Stderr, "ID inválido: %s\n", args[0])
+		os.Exit(1)
+	}
+	if err := uc.Execute(id); err != nil {
+		fmt.Fprintf(os.Stderr, "erro: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("Hábito %d removido.\n", id)
+}
+
 func habitList(uc *usecase.ListHabits, args []string) {
-	fs := newFlagSet("habit list")
+	fs := newFlagSet("habit list", "habit list [--pillar <id>]")
 	pillarID := fs.Int64("pillar", 0, "filtrar por pilar")
 	fs.Parse(args)
 
@@ -58,23 +79,6 @@ func habitList(uc *usecase.ListHabits, args []string) {
 	w.Flush()
 }
 
-func habitRemove(uc *usecase.RemoveHabit, args []string) {
-	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "uso: habits habit remove <id>")
-		os.Exit(1)
-	}
-	var id int64
-	if _, err := fmt.Sscan(args[0], &id); err != nil {
-		fmt.Fprintf(os.Stderr, "ID inválido: %s\n", args[0])
-		os.Exit(1)
-	}
-	if err := uc.Execute(id); err != nil {
-		fmt.Fprintf(os.Stderr, "erro: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Printf("Hábito %d removido.\n", id)
-}
-
 func habitAdd(uc *usecase.CreateHabit, args []string) {
 	if len(args) < 1 {
 		fmt.Fprintln(os.Stderr, "uso: habits habit add <nome> --pillar <id> --days <dias>")
@@ -82,9 +86,9 @@ func habitAdd(uc *usecase.CreateHabit, args []string) {
 	}
 	name := args[0]
 
-	fs := newFlagSet("habit add")
-	pillarID := fs.Int64("pillar", 0, "ID do pilar")
-	days := fs.String("days", "", "dias da semana (ex: seg,qua,sex ou todos)")
+	fs := newFlagSet("habit add", "habit add <nome> --pillar <id> --days <dias>")
+	pillarID := fs.Int64("pillar", 0, "ID do pilar (obrigatório)")
+	days := fs.String("days", "", "dias da semana: dom,seg,ter,qua,qui,sex,sab  ou  todos")
 	fs.Parse(args[1:])
 
 	if *pillarID == 0 {
@@ -95,6 +99,7 @@ func habitAdd(uc *usecase.CreateHabit, args []string) {
 		fmt.Fprintln(os.Stderr, "erro: --days é obrigatório")
 		os.Exit(1)
 	}
+
 	frequency := parseWeekdays(*days)
 	color := promptColor()
 
@@ -108,7 +113,6 @@ func habitAdd(uc *usecase.CreateHabit, args []string) {
 		fmt.Fprintf(os.Stderr, "erro: %v\n", err)
 		os.Exit(1)
 	}
-
 	fmt.Printf("Hábito criado: [%d] %s\n", h.ID, h.Name)
 }
 
@@ -130,11 +134,9 @@ func parseWeekdays(s string) []domain.Weekday {
 func promptColor() domain.Color {
 	validColors := []string{"azul", "verde", "laranja", "vermelho", "amarelo"}
 	fmt.Printf("Escolha uma cor [%s] (Enter para aleatório): ", strings.Join(validColors, ", "))
-
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	input := strings.TrimSpace(scanner.Text())
-
 	if input == "" {
 		return domain.ColorAleatorio
 	}

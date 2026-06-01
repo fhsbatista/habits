@@ -11,6 +11,12 @@ import (
 
 func NewListCommand(dailyOverview *usecase.DailyOverview) func(args []string) {
 	return func(args []string) {
+		if len(args) > 0 && (args[0] == "--help" || args[0] == "-h") {
+			fmt.Println("Uso:")
+			fmt.Println("  habits list   Lista hábitos pendentes hoje e tarefas em andamento")
+			fmt.Println("  habits ls     Alias para list")
+			return
+		}
 		result, err := dailyOverview.Execute(time.Now())
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "erro: %v\n", err)

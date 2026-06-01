@@ -10,9 +10,11 @@ import (
 
 func NewPillarCommand(createPillar *usecase.CreatePillar, listPillars *usecase.ListPillars) func(args []string) {
 	return func(args []string) {
-		if len(args) < 1 {
-			fmt.Fprintln(os.Stderr, "uso: habits pillar <add|list>")
-			os.Exit(1)
+		if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
+			fmt.Println("Uso:")
+			fmt.Println("  habits pillar add <nome>       Cria um novo pilar")
+			fmt.Println("  habits pillar list             Lista todos os pilares")
+			return
 		}
 		switch args[0] {
 		case "add":
@@ -50,13 +52,10 @@ func pillarAdd(uc *usecase.CreatePillar, args []string) {
 		fmt.Fprintln(os.Stderr, "uso: habits pillar add <nome>")
 		os.Exit(1)
 	}
-	name := args[0]
-
-	p, err := uc.Execute(name)
+	p, err := uc.Execute(args[0])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "erro: %v\n", err)
 		os.Exit(1)
 	}
-
 	fmt.Printf("Pilar criado: [%d] %s\n", p.ID, p.Name)
 }

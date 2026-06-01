@@ -35,15 +35,17 @@ func main() {
 	removeHabit := usecase.NewRemoveHabit(habitRepo)
 	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
 	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
+	checkOut := usecase.NewCheckOut(sessionRepo)
 	dailyTimeline := usecase.NewDailyTimeline(habitRepo, taskRepo, sessionRepo)
 
 	app := cli.NewApp()
-	app.Register("pillar", cli.NewPillarCommand(createPillar, listPillars))
-	app.Register("habit", cli.NewHabitCommand(createHabit, listHabits, removeHabit))
-	app.Register("list", cli.NewListCommand(dailyOverview))
-	app.Register("ls", cli.NewListCommand(dailyOverview))
-	app.Register("start", cli.NewStartCommand(checkIn))
-	app.Register("log", cli.NewLogCommand(dailyTimeline))
+	app.Register("pillar", "Gerencia pilares (add, list)", cli.NewPillarCommand(createPillar, listPillars))
+	app.Register("habit", "Gerencia hábitos (add, list, remove)", cli.NewHabitCommand(createHabit, listHabits, removeHabit))
+	app.Register("list", "Lista hábitos pendentes hoje e tarefas em andamento", cli.NewListCommand(dailyOverview))
+	app.Register("ls", "Alias para list", cli.NewListCommand(dailyOverview))
+	app.Register("start", "Inicia uma sessão para um hábito ou tarefa", cli.NewStartCommand(checkIn))
+	app.Register("stop", "Finaliza a sessão em andamento", cli.NewStopCommand(checkOut))
+	app.Register("log", "Exibe a timeline do dia", cli.NewLogCommand(dailyTimeline))
 
 	app.Run(os.Args[1:])
 }
