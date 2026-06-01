@@ -34,6 +34,13 @@ func (r *HabitRepository) Save(h domain.Habit) (domain.Habit, error) {
 	return h, nil
 }
 
+func (r *HabitRepository) FindByID(id int64) (domain.Habit, bool, error) {
+	row := r.db.QueryRow(
+		`SELECT id, name, pillar_id, color, frequency, created_at FROM habits WHERE id = ?`, id,
+	)
+	return scanHabit(row)
+}
+
 func (r *HabitRepository) FindByNameAndPillar(name string, pillarID int64) (domain.Habit, bool, error) {
 	row := r.db.QueryRow(
 		`SELECT id, name, pillar_id, color, frequency, created_at FROM habits WHERE name = ? AND pillar_id = ?`,

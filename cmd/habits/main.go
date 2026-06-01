@@ -31,11 +31,12 @@ func main() {
 	createPillar := usecase.NewCreatePillar(pillarRepo)
 	listPillars := usecase.NewListPillars(pillarRepo)
 	listHabits := usecase.NewListHabits(habitRepo)
+	removeHabit := usecase.NewRemoveHabit(habitRepo)
 	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
 
 	app := cli.NewApp()
 	app.Register("pillar", cli.NewPillarCommand(createPillar, listPillars))
-	app.Register("habit", cli.NewHabitCommand(createHabit, listHabits))
+	app.Register("habit", cli.NewHabitCommand(createHabit, listHabits, removeHabit))
 	app.Register("list", cli.NewListCommand(dailyOverview))
 	app.Register("ls", cli.NewListCommand(dailyOverview))
 

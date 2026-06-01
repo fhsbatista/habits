@@ -43,6 +43,11 @@ type fakeHabitRepo struct {
 	habits map[int64]domain.Habit
 }
 
+func (r *fakeHabitRepo) FindByID(id int64) (domain.Habit, bool, error) {
+	h, ok := r.habits[id]
+	return h, ok, nil
+}
+
 func (r *fakeHabitRepo) Save(h domain.Habit) (domain.Habit, error) {
 	h.ID = int64(len(r.habits) + 1)
 	r.habits[h.ID] = h
@@ -72,7 +77,7 @@ func (r *fakeHabitRepo) FindByPillar(pillarID int64) ([]domain.Habit, error) {
 	}
 	return habits, nil
 }
-func (r *fakeHabitRepo) Delete(id int64) error                              { return nil }
+func (r *fakeHabitRepo) Delete(id int64) error { delete(r.habits, id); return nil }
 
 func newRepos() (*fakePillarRepo, *fakeHabitRepo) {
 	return &fakePillarRepo{pillars: map[int64]domain.Pillar{1: {ID: 1, Name: "Saúde"}}},

@@ -2,6 +2,7 @@ package domain
 
 type HabitRepository interface {
 	Save(habit Habit) (Habit, error)
+	FindByID(id int64) (Habit, bool, error)
 	FindByNameAndPillar(name string, pillarID int64) (Habit, bool, error)
 	FindAll() ([]Habit, error)
 	FindByPillar(pillarID int64) ([]Habit, error)
