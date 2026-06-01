@@ -70,6 +70,29 @@ func (h Habit) IsDueOn(day Weekday) bool {
 	return false
 }
 
+func (h Habit) IsDueToday() bool {
+	return h.IsDueOn(WeekdayFromTime(time.Now()))
+}
+
+func WeekdayFromTime(t time.Time) Weekday {
+	switch t.Weekday() {
+	case time.Sunday:
+		return WeekdayDom
+	case time.Monday:
+		return WeekdaySeg
+	case time.Tuesday:
+		return WeekdayTer
+	case time.Wednesday:
+		return WeekdayQua
+	case time.Thursday:
+		return WeekdayQui
+	case time.Friday:
+		return WeekdaySex
+	default:
+		return WeekdaySab
+	}
+}
+
 func isValidColor(c Color) bool {
 	for _, v := range validColors {
 		if c == v {

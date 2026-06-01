@@ -2,6 +2,7 @@ package domain_test
 
 import (
 	"testing"
+	"time"
 
 	"habits/internal/domain"
 )
@@ -59,6 +60,29 @@ func TestHabit_IsDueOn(t *testing.T) {
 	}
 	if h.IsDueOn(domain.WeekdaySab) {
 		t.Error("esperava que sábado NÃO fosse dia de execução")
+	}
+}
+
+func TestHabit_IsDueToday(t *testing.T) {
+	today := domain.WeekdayFromTime(time.Now())
+	h, _ := domain.NewHabit("Hábito diário", 1, domain.ColorAzul, []domain.Weekday{today})
+	if !h.IsDueToday() {
+		t.Error("esperava que hábito fosse devido hoje")
+	}
+}
+
+func TestHabit_NaoDueToday(t *testing.T) {
+	today := domain.WeekdayFromTime(time.Now())
+	allDays := []domain.Weekday{domain.WeekdayDom, domain.WeekdaySeg, domain.WeekdayTer, domain.WeekdayQua, domain.WeekdayQui, domain.WeekdaySex, domain.WeekdaySab}
+	otherDays := []domain.Weekday{}
+	for _, d := range allDays {
+		if d != today {
+			otherDays = append(otherDays, d)
+		}
+	}
+	h, _ := domain.NewHabit("Hábito não hoje", 1, domain.ColorAzul, otherDays)
+	if h.IsDueToday() {
+		t.Error("esperava que hábito NÃO fosse devido hoje")
 	}
 }
 
