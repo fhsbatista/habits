@@ -44,17 +44,17 @@ Arquivos disponíveis:
 
 ## Fluxo obrigatório de desenvolvimento (TDD)
 
-Toda implementação de feature deve seguir este fluxo **sem pular etapas**:
+Toda implementação de feature deve seguir este fluxo **sem pular etapas**, **um teste por vez**:
 
 1. **Leia a spec** da feature em `specs/`
-2. **Escreva o teste** para o comportamento a ser implementado
+2. **Escreva um único teste** para o próximo comportamento a ser implementado
 3. **Aguarde confirmação** do usuário de que o teste faz sentido
 4. **Execute o teste** e confirme que ele **falha** (`go test ./...`)
 5. **Implemente** o código mínimo para o teste passar
 6. **Execute o teste** novamente e confirme que ele **passa**
-7. Só então a feature é considerada completa
+7. Volte ao passo 2 para o próximo comportamento
 
-Nunca implemente código antes de ter um teste falhando aprovado.
+Nunca escreva mais de um teste por vez. Nunca implemente código antes de ter um teste falhando aprovado.
 
 ## Convenções de código
 
