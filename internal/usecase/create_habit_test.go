@@ -30,7 +30,13 @@ func (r *fakePillarRepo) FindByName(name string) (domain.Pillar, bool, error) {
 	}
 	return domain.Pillar{}, false, nil
 }
-func (r *fakePillarRepo) FindAll() ([]domain.Pillar, error)  { return nil, nil }
+func (r *fakePillarRepo) FindAll() ([]domain.Pillar, error) {
+	pillars := make([]domain.Pillar, 0, len(r.pillars))
+	for _, p := range r.pillars {
+		pillars = append(pillars, p)
+	}
+	return pillars, nil
+}
 func (r *fakePillarRepo) Delete(id int64) error              { return nil }
 
 type fakeHabitRepo struct {
@@ -50,8 +56,22 @@ func (r *fakeHabitRepo) FindByNameAndPillar(name string, pillarID int64) (domain
 	}
 	return domain.Habit{}, false, nil
 }
-func (r *fakeHabitRepo) FindAll() ([]domain.Habit, error)                  { return nil, nil }
-func (r *fakeHabitRepo) FindByPillar(pillarID int64) ([]domain.Habit, error) { return nil, nil }
+func (r *fakeHabitRepo) FindAll() ([]domain.Habit, error) {
+	habits := make([]domain.Habit, 0, len(r.habits))
+	for _, h := range r.habits {
+		habits = append(habits, h)
+	}
+	return habits, nil
+}
+func (r *fakeHabitRepo) FindByPillar(pillarID int64) ([]domain.Habit, error) {
+	var habits []domain.Habit
+	for _, h := range r.habits {
+		if h.PillarID == pillarID {
+			habits = append(habits, h)
+		}
+	}
+	return habits, nil
+}
 func (r *fakeHabitRepo) Delete(id int64) error                              { return nil }
 
 func newRepos() (*fakePillarRepo, *fakeHabitRepo) {

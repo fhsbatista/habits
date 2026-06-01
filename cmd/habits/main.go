@@ -28,10 +28,12 @@ func main() {
 
 	createHabit := usecase.NewCreateHabit(pillarRepo, habitRepo)
 	createPillar := usecase.NewCreatePillar(pillarRepo)
+	listPillars := usecase.NewListPillars(pillarRepo)
+	listHabits := usecase.NewListHabits(habitRepo)
 
 	app := cli.NewApp()
-	app.Register("pillar", cli.NewPillarCommand(createPillar))
-	app.Register("habit", cli.NewHabitCommand(createHabit))
+	app.Register("pillar", cli.NewPillarCommand(createPillar, listPillars))
+	app.Register("habit", cli.NewHabitCommand(createHabit, listHabits))
 
 	app.Run(os.Args[1:])
 }
