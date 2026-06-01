@@ -35,6 +35,7 @@ func main() {
 	removeHabit := usecase.NewRemoveHabit(habitRepo)
 	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
 	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
+	dailyTimeline := usecase.NewDailyTimeline(habitRepo, taskRepo, sessionRepo)
 
 	app := cli.NewApp()
 	app.Register("pillar", cli.NewPillarCommand(createPillar, listPillars))
@@ -42,6 +43,7 @@ func main() {
 	app.Register("list", cli.NewListCommand(dailyOverview))
 	app.Register("ls", cli.NewListCommand(dailyOverview))
 	app.Register("start", cli.NewStartCommand(checkIn))
+	app.Register("log", cli.NewLogCommand(dailyTimeline))
 
 	app.Run(os.Args[1:])
 }

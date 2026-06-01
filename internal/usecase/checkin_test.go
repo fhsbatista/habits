@@ -28,7 +28,17 @@ func (r *fakeSessionRepo) FindOpen() (domain.Session, bool, error) {
 func (r *fakeSessionRepo) FindByDayAndRef(day time.Time, refType domain.SessionRefType, refID int64) ([]domain.Session, error) {
 	return nil, nil
 }
-func (r *fakeSessionRepo) FindByDay(day time.Time) ([]domain.Session, error) { return nil, nil }
+func (r *fakeSessionRepo) FindByDay(day time.Time) ([]domain.Session, error) {
+	start := time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, day.Location())
+	end := start.Add(24 * time.Hour)
+	var result []domain.Session
+	for _, s := range r.sessions {
+		if s.StartedAt.After(start) && s.StartedAt.Before(end) {
+			result = append(result, s)
+		}
+	}
+	return result, nil
+}
 func (r *fakeSessionRepo) Update(s domain.Session) error {
 	r.sessions[s.ID] = s
 	return nil
