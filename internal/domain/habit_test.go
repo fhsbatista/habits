@@ -20,6 +20,13 @@ func TestNewHabit_FrequenciaVazia(t *testing.T) {
 	}
 }
 
+func TestNewHabit_CorInvalida(t *testing.T) {
+	_, err := domain.NewHabit("Leitura", 1, domain.Color("roxo"), []domain.Weekday{domain.WeekdaySeg})
+	if err == nil {
+		t.Fatal("esperava erro para cor inválida")
+	}
+}
+
 func TestNewHabit_Valid(t *testing.T) {
 	h, err := domain.NewHabit("Meditação", 1, domain.ColorVerde, []domain.Weekday{domain.WeekdaySeg, domain.WeekdayQua})
 	if err != nil {
