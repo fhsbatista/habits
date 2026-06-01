@@ -27,6 +27,24 @@ func TestNewHabit_CorInvalida(t *testing.T) {
 	}
 }
 
+func TestNewHabit_CorAleatoria(t *testing.T) {
+	h, err := domain.NewHabit("Leitura", 1, domain.ColorAleatorio, []domain.Weekday{domain.WeekdaySeg})
+	if err != nil {
+		t.Fatalf("esperava sucesso com cor aleatória, got erro: %v", err)
+	}
+	validColors := []domain.Color{domain.ColorAzul, domain.ColorVerde, domain.ColorLaranja, domain.ColorVermelho, domain.ColorAmarelo}
+	found := false
+	for _, c := range validColors {
+		if h.Color == c {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("cor aleatória %q não é uma cor válida", h.Color)
+	}
+}
+
 func TestNewHabit_Valid(t *testing.T) {
 	h, err := domain.NewHabit("Meditação", 1, domain.ColorVerde, []domain.Weekday{domain.WeekdaySeg, domain.WeekdayQua})
 	if err != nil {
