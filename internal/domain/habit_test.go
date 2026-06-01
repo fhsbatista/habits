@@ -6,6 +6,13 @@ import (
 	"habits/internal/domain"
 )
 
+func TestNewHabit_NomeVazio(t *testing.T) {
+	_, err := domain.NewHabit("", 1, domain.ColorAzul, []domain.Weekday{domain.WeekdaySeg})
+	if err == nil {
+		t.Fatal("esperava erro para nome vazio")
+	}
+}
+
 func TestNewHabit_Valid(t *testing.T) {
 	h, err := domain.NewHabit("Meditação", 1, domain.ColorVerde, []domain.Weekday{domain.WeekdaySeg, domain.WeekdayQua})
 	if err != nil {
