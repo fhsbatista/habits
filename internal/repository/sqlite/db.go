@@ -35,6 +35,16 @@ func migrate(db *sql.DB) error {
 			created_at DATETIME NOT NULL,
 			UNIQUE(name, pillar_id)
 		);
+
+		CREATE TABLE IF NOT EXISTS tasks (
+			id          INTEGER PRIMARY KEY AUTOINCREMENT,
+			title       TEXT    NOT NULL UNIQUE,
+			description TEXT    NOT NULL DEFAULT '',
+			status      TEXT    NOT NULL DEFAULT 'em_andamento',
+			next_action TEXT,
+			created_at  DATETIME NOT NULL,
+			updated_at  DATETIME
+		);
 	`)
 	return err
 }
