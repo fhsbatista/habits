@@ -45,6 +45,23 @@ func TestNewHabit_CorAleatoria(t *testing.T) {
 	}
 }
 
+func TestHabit_IsDueOn(t *testing.T) {
+	h, _ := domain.NewHabit("Exercício", 1, domain.ColorVerde, []domain.Weekday{domain.WeekdaySeg, domain.WeekdayQua, domain.WeekdaySex})
+
+	if !h.IsDueOn(domain.WeekdaySeg) {
+		t.Error("esperava que segunda fosse dia de execução")
+	}
+	if !h.IsDueOn(domain.WeekdayQua) {
+		t.Error("esperava que quarta fosse dia de execução")
+	}
+	if h.IsDueOn(domain.WeekdayTer) {
+		t.Error("esperava que terça NÃO fosse dia de execução")
+	}
+	if h.IsDueOn(domain.WeekdaySab) {
+		t.Error("esperava que sábado NÃO fosse dia de execução")
+	}
+}
+
 func TestNewHabit_Valid(t *testing.T) {
 	h, err := domain.NewHabit("Meditação", 1, domain.ColorVerde, []domain.Weekday{domain.WeekdaySeg, domain.WeekdayQua})
 	if err != nil {

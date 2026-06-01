@@ -61,6 +61,15 @@ func NewHabit(name string, pillarID int64, color Color, frequency []Weekday) (Ha
 	}, nil
 }
 
+func (h Habit) IsDueOn(day Weekday) bool {
+	for _, d := range h.Frequency {
+		if d == day {
+			return true
+		}
+	}
+	return false
+}
+
 func isValidColor(c Color) bool {
 	for _, v := range validColors {
 		if c == v {
