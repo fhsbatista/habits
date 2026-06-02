@@ -3,15 +3,32 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
+	"github.com/tursodatabase/libsql-client-go/libsql"
 	_ "modernc.org/sqlite"
 )
 
 func Open(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", path)
-	if err != nil {
-		return nil, fmt.Errorf("abrir banco: %w", err)
+	var db *sql.DB
+
+	tursoURL := os.Getenv("TURSO_URL")
+	tursoToken := os.Getenv("TURSO_TOKEN")
+
+	if tursoURL != "" {
+		connector, err := libsql.NewConnector(tursoURL, libsql.WithAuthToken(tursoToken))
+		if err != nil {
+			return nil, fmt.Errorf("conectar ao Turso: %w", err)
+		}
+		db = sql.OpenDB(connector)
+	} else {
+		var err error
+		db, err = sql.Open("sqlite", path)
+		if err != nil {
+			return nil, fmt.Errorf("abrir banco: %w", err)
+		}
 	}
+
 	if err := migrate(db); err != nil {
 		return nil, fmt.Errorf("migrar banco: %w", err)
 	}

@@ -137,8 +137,10 @@ func printTimelineHeader(barWidth int, minsPerBlock float64) {
 }
 
 func printTimelineEntry(e usecase.TimelineEntry, barWidth int, minsPerBlock float64, day time.Time) {
-	startMin := float64(e.Session.StartedAt.Hour()*60 + e.Session.StartedAt.Minute())
-	endMin := float64(e.EffectiveEnd.Hour()*60 + e.EffectiveEnd.Minute())
+	localStart := e.Session.StartedAt.Local()
+	localEnd := e.EffectiveEnd.Local()
+	startMin := float64(localStart.Hour()*60 + localStart.Minute())
+	endMin := float64(localEnd.Hour()*60 + localEnd.Minute())
 
 	startPos := int(startMin / minsPerBlock)
 	endPos := int(endMin / minsPerBlock)

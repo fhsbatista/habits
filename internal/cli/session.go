@@ -47,6 +47,29 @@ func NewStartCommand(checkIn *usecase.CheckIn) func(args []string) {
 	}
 }
 
+func NewCompleteCommand(completeHabit *usecase.CompleteHabit) func(args []string) {
+	return func(args []string) {
+		if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
+			fmt.Println("Uso:")
+			fmt.Println("  habits complete <id>   Marca um hábito como realizado agora")
+			return
+		}
+
+		var id int64
+		if _, err := fmt.Sscan(args[0], &id); err != nil {
+			fmt.Fprintf(os.Stderr, "ID inválido: %s\n", args[0])
+			os.Exit(1)
+		}
+
+		_, err := completeHabit.Execute(id)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "erro: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Hábito %d marcado como realizado.\n", id)
+	}
+}
+
 func NewStopCommand(checkOut *usecase.CheckOut) func(args []string) {
 	return func(args []string) {
 		if len(args) > 0 && (args[0] == "--help" || args[0] == "-h") {

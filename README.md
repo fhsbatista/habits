@@ -20,10 +20,34 @@ sudo go build -o /usr/local/bin/habits ./cmd/habits
 
 ## Banco de dados
 
+### Local (padrão)
+
 O banco SQLite é criado automaticamente em `~/.habits.db`. Para usar outro caminho:
 
 ```bash
 export HABITS_DB=/caminho/para/habits.db
+```
+
+### Turso (cloud)
+
+Para usar um banco na nuvem via [Turso](https://turso.tech), defina as variáveis de ambiente abaixo. O banco local é ignorado quando `TURSO_URL` está definido.
+
+```bash
+export TURSO_URL=libsql://seu-banco.turso.io
+export TURSO_TOKEN=seu-token
+```
+
+Para obter a URL e o token:
+
+```bash
+# Instalar CLI do Turso
+curl -sSfL https://get.tur.so/install.sh | bash
+
+# Login e criação do banco
+turso auth login
+turso db create habits
+turso db show habits      # exibe a URL
+turso db tokens create habits  # gera o token
 ```
 
 ## Comandos

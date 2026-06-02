@@ -32,8 +32,8 @@ func NewSession(refType SessionRefType, refID int64) (Session, error) {
 }
 
 func (s *Session) Finish(at time.Time) error {
-	if !at.After(s.StartedAt) {
-		return fmt.Errorf("finishedAt deve ser posterior ao startedAt")
+	if at.Before(s.StartedAt) {
+		return fmt.Errorf("finishedAt deve ser igual ou posterior ao startedAt")
 	}
 	s.FinishedAt = &at
 	return nil

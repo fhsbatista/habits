@@ -36,6 +36,7 @@ func main() {
 	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
 	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
 	checkOut := usecase.NewCheckOut(sessionRepo)
+	completeHabit := usecase.NewCompleteHabit(habitRepo, sessionRepo)
 	dailyTimeline := usecase.NewDailyTimeline(habitRepo, taskRepo, sessionRepo)
 	habitGrid := usecase.NewHabitGrid(habitRepo, sessionRepo)
 
@@ -44,6 +45,7 @@ func main() {
 	app.Register("habit", "Gerencia hábitos (add, list, remove)", cli.NewHabitCommand(createHabit, listHabits, removeHabit))
 	app.Register("list", "Lista hábitos pendentes hoje e tarefas em andamento", cli.NewListCommand(dailyOverview))
 	app.Register("ls", "Alias para list", cli.NewListCommand(dailyOverview))
+	app.Register("complete", "Marca um hábito como realizado agora", cli.NewCompleteCommand(completeHabit))
 	app.Register("start", "Inicia uma sessão para um hábito ou tarefa", cli.NewStartCommand(checkIn))
 	app.Register("stop", "Finaliza a sessão em andamento", cli.NewStopCommand(checkOut))
 	app.Register("log", "Exibe a timeline do dia e grid de hábitos", cli.NewLogCommand(dailyTimeline, habitGrid))
