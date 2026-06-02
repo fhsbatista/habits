@@ -33,7 +33,7 @@ func main() {
 	listPillars := usecase.NewListPillars(pillarRepo)
 	listHabits := usecase.NewListHabits(habitRepo)
 	removeHabit := usecase.NewRemoveHabit(habitRepo)
-	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo)
+	dailyOverview := usecase.NewDailyOverview(pillarRepo, habitRepo, taskRepo, sessionRepo)
 	checkIn := usecase.NewCheckIn(habitRepo, taskRepo, sessionRepo)
 	checkOut := usecase.NewCheckOut(sessionRepo)
 	completeHabit := usecase.NewCompleteHabit(habitRepo, sessionRepo)

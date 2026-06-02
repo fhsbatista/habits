@@ -58,6 +58,7 @@ func TestDailyOverview_SeparaTarefasPorNexAction(t *testing.T) {
 		&fakePillarRepo{pillars: map[int64]domain.Pillar{}},
 		&fakeHabitRepo{habits: map[int64]domain.Habit{}},
 		taskRepo,
+		&fakeSessionRepo{sessions: map[int64]domain.Session{}},
 	)
 
 	result, err := uc.Execute(now)
@@ -87,6 +88,7 @@ func TestDailyOverview_OrdenaPorTempoSemUpdate(t *testing.T) {
 		&fakePillarRepo{pillars: map[int64]domain.Pillar{}},
 		&fakeHabitRepo{habits: map[int64]domain.Habit{}},
 		taskRepo,
+		&fakeSessionRepo{sessions: map[int64]domain.Session{}},
 	)
 
 	result, err := uc.Execute(now)
@@ -109,16 +111,16 @@ func TestDailyOverview_HabitosPendentesHoje(t *testing.T) {
 		1: {ID: 1, Name: "Saúde"},
 	}}
 
-	uc := usecase.NewDailyOverview(pillarRepo, habitRepo, &fakeTaskRepo{tasks: map[int64]domain.Task{}})
+	uc := usecase.NewDailyOverview(pillarRepo, habitRepo, &fakeTaskRepo{tasks: map[int64]domain.Task{}}, &fakeSessionRepo{sessions: map[int64]domain.Session{}})
 
 	result, err := uc.Execute(now)
 	if err != nil {
 		t.Fatalf("esperava sucesso, got erro: %v", err)
 	}
-	if len(result.PendingHabits) != 1 {
-		t.Errorf("esperava 1 hábito pendente, got %d", len(result.PendingHabits))
+	if len(result.DueHabits) != 1 {
+		t.Errorf("esperava 1 hábito devido hoje, got %d", len(result.DueHabits))
 	}
-	if result.PendingHabits[0].Habit.Name != "Meditação" {
-		t.Errorf("esperava hábito 'Meditação', got %q", result.PendingHabits[0].Habit.Name)
+	if result.DueHabits[0].Habit.Name != "Meditação" {
+		t.Errorf("esperava hábito 'Meditação', got %q", result.DueHabits[0].Habit.Name)
 	}
 }

@@ -8,25 +8,27 @@ import (
 	"habits/internal/domain"
 )
 
-type PendingHabit struct {
-	Habit  domain.Habit
-	Pillar domain.Pillar
+type DueHabit struct {
+	Habit     domain.Habit
+	Pillar    domain.Pillar
+	Performed bool
 }
 
 type DailyOverviewResult struct {
-	PendingHabits []PendingHabit
-	ExecuteTasks  []domain.Task
-	WaitTasks     []domain.Task
+	DueHabits    []DueHabit
+	ExecuteTasks []domain.Task
+	WaitTasks    []domain.Task
 }
 
 type DailyOverview struct {
-	pillarRepo domain.PillarRepository
-	habitRepo  domain.HabitRepository
-	taskRepo   domain.TaskRepository
+	pillarRepo  domain.PillarRepository
+	habitRepo   domain.HabitRepository
+	taskRepo    domain.TaskRepository
+	sessionRepo domain.SessionRepository
 }
 
-func NewDailyOverview(pillarRepo domain.PillarRepository, habitRepo domain.HabitRepository, taskRepo domain.TaskRepository) *DailyOverview {
-	return &DailyOverview{pillarRepo: pillarRepo, habitRepo: habitRepo, taskRepo: taskRepo}
+func NewDailyOverview(pillarRepo domain.PillarRepository, habitRepo domain.HabitRepository, taskRepo domain.TaskRepository, sessionRepo domain.SessionRepository) *DailyOverview {
+	return &DailyOverview{pillarRepo: pillarRepo, habitRepo: habitRepo, taskRepo: taskRepo, sessionRepo: sessionRepo}
 }
 
 func (uc *DailyOverview) Execute(now time.Time) (DailyOverviewResult, error) {
@@ -41,19 +43,24 @@ func (uc *DailyOverview) Execute(now time.Time) (DailyOverviewResult, error) {
 	}
 
 	return DailyOverviewResult{
-		PendingHabits: pending,
-		ExecuteTasks:  execute,
-		WaitTasks:     wait,
+		DueHabits:    pending,
+		ExecuteTasks: execute,
+		WaitTasks:    wait,
 	}, nil
 }
 
-func (uc *DailyOverview) pendingHabits(now time.Time) ([]PendingHabit, error) {
+func (uc *DailyOverview) pendingHabits(now time.Time) ([]DueHabit, error) {
 	habits, err := uc.habitRepo.FindAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var pending []PendingHabit
+	sessions, err := uc.sessionRepo.FindByDay(now)
+	if err != nil {
+		return nil, err
+	}
+
+	var due []DueHabit
 	for _, h := range habits {
 		if !h.IsDueOn(domain.WeekdayFromTime(now)) {
 			continue
@@ -62,9 +69,9 @@ func (uc *DailyOverview) pendingHabits(now time.Time) ([]PendingHabit, error) {
 		if err != nil {
 			return nil, err
 		}
-		pending = append(pending, PendingHabit{Habit: h, Pillar: pillar})
+		due = append(due, DueHabit{Habit: h, Pillar: pillar, Performed: h.WasPerformedOn(now, sessions)})
 	}
-	return pending, nil
+	return due, nil
 }
 
 func (uc *DailyOverview) groupedTasks(now time.Time) (execute, wait []domain.Task, err error) {

@@ -25,12 +25,16 @@ func NewListCommand(dailyOverview *usecase.DailyOverview) func(args []string) {
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 
-		if len(result.PendingHabits) > 0 {
+		if len(result.DueHabits) > 0 {
 			fmt.Fprintln(w, "[ HÁBITOS DE HOJE ]")
 			fmt.Fprintln(w, "ID\tNome\tPilar")
 			fmt.Fprintln(w, "--\t----\t-----")
-			for _, ph := range result.PendingHabits {
-				fmt.Fprintf(w, "%d\t%s\t%s\n", ph.Habit.ID, ph.Habit.Name, ph.Pillar.Name)
+			for _, ph := range result.DueHabits {
+				if ph.Performed {
+					fmt.Fprintf(w, "\033[9m%d\t%s\t%s\033[0m\n", ph.Habit.ID, ph.Habit.Name, ph.Pillar.Name)
+				} else {
+					fmt.Fprintf(w, "%d\t%s\t%s\n", ph.Habit.ID, ph.Habit.Name, ph.Pillar.Name)
+				}
 			}
 			fmt.Fprintln(w)
 		}
